@@ -212,21 +212,19 @@ nav {
   display: flex; align-items: center; justify-content: center; gap: .4rem;
 }
 .hero-rotate-prefix { color: var(--muted); }
+.hero-rotate-static { color: var(--green); text-shadow: 0 0 20px rgba(0,255,136,.35); }
 .hero-rotate-text {
   color: var(--green);
   text-shadow: 0 0 20px rgba(0,255,136,.35);
+  display: inline;
+  min-width: 4px;
+}
+.hero-rotate-cursor {
   display: inline-block;
-  min-width: 220px;
-  text-align: left;
-  transition: opacity .35s ease, transform .35s ease;
-}
-.hero-rotate-text.fade-out {
-  opacity: 0;
-  transform: translateY(-8px);
-}
-.hero-rotate-text.fade-in {
-  opacity: 1;
-  transform: translateY(0);
+  color: var(--green);
+  animation: blink 1s step-end infinite;
+  margin-left: 1px;
+  font-weight: 300;
 }
 
 .btn {
@@ -773,8 +771,8 @@ footer {
       and Kubernetes-native node intelligence.
     </p>
     <div class="hero-rotate-wrap">
-      <span class="hero-rotate-prefix">—</span>
-      <span id="heroRotate" class="hero-rotate-text">Care for your Nodes</span>
+      <span class="hero-rotate-prefix">//</span>
+      <span class="hero-rotate-static">Care for your </span><span id="heroRotate" class="hero-rotate-text">Nodes</span><span class="hero-rotate-cursor">|</span>
     </div>
 
     <div class="hero-cta">
@@ -1167,25 +1165,45 @@ const observer = new IntersectionObserver(entries => {
 }, { threshold: 0.12 });
 reveals.forEach(r => observer.observe(r));
 
-// Rotating hero text
+// Rotating hero text — typewriter on last word only
 (function() {
-  const phrases = [
-    'Care for your Nodes',
-    'Care for your Cluster',
-    'Care for your Infrastructure',
-    'Care for your Kernel'
-  ];
+  const words = ['Nodes', 'Cluster', 'Infrastructure', 'Kernel'];
   let idx = 0;
   const el = document.getElementById('heroRotate');
   if (!el) return;
-  setInterval(() => {
-    el.classList.add('fade-out');
+
+  const typeDelay = 72;   // ms per character typed
+  const deleteDelay = 45; // ms per character deleted
+  const pauseAfterType = 1800; // ms to hold before deleting
+
+  function type(text, cb) {
+    let i = 0;
+    el.textContent = '';
+    const t = setInterval(() => {
+      el.textContent += text[i++];
+      if (i === text.length) { clearInterval(t); cb(); }
+    }, typeDelay);
+  }
+
+  function del(cb) {
+    const t = setInterval(() => {
+      const cur = el.textContent;
+      if (cur.length === 0) { clearInterval(t); cb(); return; }
+      el.textContent = cur.slice(0, -1);
+    }, deleteDelay);
+  }
+
+  function cycle() {
     setTimeout(() => {
-      idx = (idx + 1) % phrases.length;
-      el.textContent = phrases[idx];
-      el.classList.remove('fade-out');
-    }, 360);
-  }, 2400);
+      del(() => {
+        idx = (idx + 1) % words.length;
+        type(words[idx], cycle);
+      });
+    }, pauseAfterType);
+  }
+
+  el.textContent = words[0];
+  cycle();
 })();
 
 </script>
