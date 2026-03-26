@@ -1,0 +1,7 @@
+carenel
+dist/
+*.o
+*.so
+*.out
+.env
+.DS_Store
