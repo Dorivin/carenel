@@ -4,7 +4,7 @@
 
 [![CI](https://github.com/Dorivin/carenel/actions/workflows/ci.yaml/badge.svg)](https://github.com/Dorivin/carenel/actions)
 [![Go Version](https://img.shields.io/badge/go-1.22-00ADD8?logo=go)](https://golang.org)
-[![License](https://img.shields.io/badge/license-Apache%202.0-green)](LICENSE)
+[![License](https://img.shields.io/badge/license-AGPL--3.0-green)](LICENSE)
 
 ---
 
